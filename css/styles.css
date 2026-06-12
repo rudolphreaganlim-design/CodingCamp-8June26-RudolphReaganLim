@@ -1,0 +1,672 @@
+/* ============================================================
+   styles.css — Expense & Budget Visualizer
+   Palette: #121212 bg · #212121 card · #FFD700 gold · #FAFAFA text
+   ============================================================ */
+
+/* ── Google Font import ────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ── CSS Custom Properties ─────────────────────────────────── */
+:root {
+  /* Core palette */
+  --color-bg:            #121212;
+  --color-card:          #212121;
+  --color-gold:          #FFD700;
+  --color-gold-dark:     #C9A800;
+  --color-gold-muted:    rgba(255,215,0,0.15);
+  --color-text:          #FAFAFA;
+  --color-text-muted:    rgba(250,250,250,0.5);
+  --color-text-subtle:   rgba(250,250,250,0.35);
+  --color-error:         #FF5C5C;
+  --color-error-bg:      rgba(255,92,92,0.1);
+
+  /* Semantic tokens */
+  --bg-body:             var(--color-bg);
+  --bg-card:             var(--color-card);
+  --bg-header:           var(--color-card);
+  --bg-input:            #1A1A1A;
+  --bg-month-header:     #1A1A1A;
+  --bg-tx-row:           var(--color-card);
+  --bg-tx-row-hover:     #2A2A2A;
+
+  --text-primary:        var(--color-text);
+  --text-secondary:      var(--color-gold);
+  --text-muted:          var(--color-text-muted);
+  --text-on-header:      var(--color-text);
+  --text-amount:         var(--color-gold);
+  --text-error:          var(--color-error);
+
+  --border-card:         rgba(255,215,0,0.12);
+  --border-input:        rgba(255,215,0,0.25);
+  --border-input-focus:  var(--color-gold);
+
+  --shadow-card:         0 4px 20px 0 rgba(0,0,0,0.4);
+  --shadow-header:       0 2px 12px 0 rgba(0,0,0,0.5);
+
+  --radius-card:         1rem;
+  --radius-input:        0.5rem;
+  --radius-btn:          0.75rem;
+
+  --transition-base:     all 0.2s ease;
+}
+
+/* ── Dark mode overrides (same palette — already dark by default) ── */
+body.dark {
+  --bg-body:             #0A0A0A;
+  --bg-card:             #181818;
+  --bg-header:           #181818;
+  --bg-input:            #111111;
+  --bg-month-header:     #111111;
+  --bg-tx-row:           #181818;
+  --bg-tx-row-hover:     #222222;
+
+  --border-card:         rgba(255,215,0,0.10);
+  --border-input:        rgba(255,215,0,0.20);
+
+  --shadow-card:         0 4px 24px 0 rgba(0,0,0,0.6);
+  --shadow-header:       0 2px 12px 0 rgba(0,0,0,0.7);
+}
+
+/* ── Base reset / body ─────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ── Utility ───────────────────────────────────────────────── */
+.hidden {
+  display: none !important;
+}
+
+/* ── Annual Summary / Header ───────────────────────────────── */
+#annual-summary {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background-color: var(--bg-header);
+  box-shadow: var(--shadow-header);
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--border-card);
+}
+
+.header-left h1 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.header-subtitle {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.header-subtitle span {
+  font-weight: 600;
+  color: var(--color-gold);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.currency-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.currency-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .currency-label { display: none; }
+}
+
+#annual-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-gold);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+#theme-toggle {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background: var(--color-gold-muted);
+  border: 1px solid rgba(255,215,0,0.3);
+  color: var(--color-gold);
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-base);
+}
+
+#theme-toggle:hover {
+  background: rgba(255,215,0,0.25);
+  border-color: rgba(255,215,0,0.55);
+}
+
+/* ── Main layout ───────────────────────────────────────────── */
+main {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+  main {
+    grid-template-columns: 1fr 1fr;
+    padding: 2rem 1.5rem;
+  }
+}
+
+.left-col,
+.right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Card shell ────────────────────────────────────────────── */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ── Section headings ──────────────────────────────────────── */
+section h2,
+.section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ── Form fields ───────────────────────────────────────────── */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.field-label,
+label.field-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.field-input,
+input.field-input,
+select.field-input {
+  background-color: var(--bg-input);
+  border: 1.5px solid var(--border-input);
+  border-radius: var(--radius-input);
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  padding: 0.55rem 0.75rem;
+  width: 100%;
+  transition: var(--transition-base);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.field-input:focus,
+input.field-input:focus,
+select.field-input:focus {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(255,215,0,0.18);
+}
+
+.field-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Native date / number input icon tint */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7) sepia(1) saturate(3) hue-rotate(5deg);
+  cursor: pointer;
+}
+
+/* Select arrow */
+select.field-input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23FFD700' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 1.1em;
+  padding-right: 2.2rem;
+}
+
+body.dark select.field-input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23FFD700' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'/%3E%3C/svg%3E");
+}
+
+/* Field error message */
+.field-error {
+  font-size: 0.78rem;
+  color: var(--text-error);
+  font-weight: 500;
+  min-height: 1rem;
+  display: block;
+}
+
+/* ── Submit button ─────────────────────────────────────────── */
+#input-form button[type="submit"],
+button.btn-submit {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-gold);
+  color: #121212;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(255,215,0,0.25);
+  transition: var(--transition-base);
+  margin-top: 0.5rem;
+}
+
+#input-form button[type="submit"]:hover,
+button.btn-submit:hover {
+  background-color: var(--color-gold-dark);
+  box-shadow: 0 5px 18px rgba(255,215,0,0.35);
+  transform: translateY(-1px);
+}
+
+#input-form button[type="submit"]:active,
+button.btn-submit:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(255,215,0,0.2);
+}
+
+/* ── Sort control ──────────────────────────────────────────── */
+#sort-control {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1.5rem;
+}
+
+#sort-control label,
+#sort-control > label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  white-space: nowrap;
+}
+
+#sort-control .field-input {
+  flex: 1;
+}
+
+/* ── Transaction list ──────────────────────────────────────── */
+#transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+  max-height: 75vh;
+  padding-right: 0.25rem;
+
+  /* Scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gold-dark) transparent;
+}
+
+#transaction-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+#transaction-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#transaction-list::-webkit-scrollbar-thumb {
+  background-color: var(--color-gold-dark);
+  border-radius: 999px;
+}
+
+/* Transactions column heading */
+.right-col > .section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0;
+}
+
+#empty-placeholder {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 3rem;
+  font-size: 0.9rem;
+}
+
+/* ── Month group ───────────────────────────────────────────── */
+.month-group {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+.month-group h3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.1rem;
+  background-color: var(--bg-month-header);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  border-bottom: 1px solid var(--border-card);
+  letter-spacing: 0.02em;
+}
+
+.monthly-total {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--color-gold);
+  background: var(--color-gold-muted);
+  border-radius: 0.4rem;
+  padding: 0.1rem 0.5rem;
+}
+
+/* ── Transaction row ───────────────────────────────────────── */
+.month-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.month-group ul li {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1.1rem;
+  background-color: var(--bg-tx-row);
+  border-bottom: 1px solid var(--border-card);
+  transition: background-color 0.15s ease;
+}
+
+.month-group ul li:last-child {
+  border-bottom: none;
+}
+
+.month-group ul li:hover {
+  background-color: var(--bg-tx-row-hover);
+}
+
+.tx-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tx-date {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.tx-amount {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-amount);
+  white-space: nowrap;
+}
+
+.tx-category {
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  background: var(--color-gold-muted);
+  border-radius: 0.375rem;
+  padding: 0.15rem 0.45rem;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+body.dark .tx-category {
+  background: rgba(255,215,0,0.12);
+  color: var(--color-gold);
+}
+
+/* ── Delete button ─────────────────────────────────────────── */
+.btn-delete {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.375rem;
+  border: 1.5px solid rgba(255,92,92,0.4);
+  background: rgba(255,92,92,0.08);
+  color: #FF5C5C;
+  cursor: pointer;
+  transition: var(--transition-base);
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+
+.btn-delete:hover {
+  background: rgba(255,92,92,0.18);
+  border-color: #FF5C5C;
+}
+
+body.dark .btn-delete {
+  border-color: rgba(255,92,92,0.35);
+  background: rgba(255,92,92,0.07);
+  color: #FF7A7A;
+}
+
+body.dark .btn-delete:hover {
+  background: rgba(255,92,92,0.18);
+  border-color: #FF7A7A;
+}
+
+/* ── Chart section ─────────────────────────────────────────── */
+#chart-section {
+  display: flex;
+  flex-direction: column;
+}
+
+#chart-section h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#chart-section .chart-wrapper {
+  position: relative;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#pie-chart {
+  max-height: 260px;
+}
+
+#chart-placeholder,
+#chart-error {
+  position: absolute;
+  text-align: center;
+  font-size: 0.875rem;
+  padding: 0 1rem;
+}
+
+#chart-placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+#chart-error {
+  color: var(--text-error);
+}
+
+/* ── Currency selector (header) ────────────────────────────── */
+.currency-select-header {
+  background-color: rgba(255,215,0,0.08);
+  border: 1px solid rgba(255,215,0,0.3);
+  border-radius: 0.5rem;
+  color: var(--color-gold);
+  font-size: 0.78rem;
+  font-family: inherit;
+  font-weight: 600;
+  padding: 0.3rem 1.8rem 0.3rem 0.6rem;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  max-width: 11rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23FFD700' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.4rem center;
+  background-size: 1em;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.currency-select-header:hover {
+  background-color: rgba(255,215,0,0.15);
+  border-color: rgba(255,215,0,0.55);
+}
+
+.currency-select-header:focus {
+  outline: 2px solid rgba(255,215,0,0.5);
+  outline-offset: 2px;
+}
+
+.currency-select-header option {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+/* ── Storage error banner ──────────────────────────────────── */
+#storage-error-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: #991B1B;
+  color: #FEF2F2;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* ── Responsive tweaks ─────────────────────────────────────── */
+@media (max-width: 640px) {
+  .month-group ul li {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    row-gap: 0.25rem;
+  }
+
+  .tx-date,
+  .tx-category {
+    display: none;
+  }
+
+  .tx-amount {
+    font-size: 0.85rem;
+  }
+
+  #annual-amount {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Focus visible accessibility ───────────────────────────── */
+*:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Smooth dark/light transitions ─────────────────────────── */
+.month-group,
+.field-input,
+input.field-input,
+select.field-input,
+.btn-delete,
+.tx-category {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
